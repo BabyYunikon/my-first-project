@@ -9,6 +9,12 @@
     justify-content: center;
     height: 100vh;
   }
+
+  .github 
+  {
+    margin: 25px;
+    text-align: center;
+  }
   
   a {
     text-decoration: none;
