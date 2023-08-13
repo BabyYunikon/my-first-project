@@ -128,10 +128,28 @@
   }
   .temperature {
     width: 50%;
-    color: rgb(238, 56, 117);
+    
     font-size: 100px;
     font-weight: 600;
   }
+  .temperature-value{
+    color: rgb(238, 56, 117) !important;
+    width: fit-content !important;
+}
+.temperature-select{
+    color: rgb(153, 153, 153);
+    width: fit-content !important;
+    font-size: 50px;
+    line-height: 150px;
+    cursor: pointer;
+  }
+.temperature-sep{
+    color: rgb(153, 153, 153);
+    width: fit-content !important;
+    font-size: 50px;
+    line-height: 150px;   
+  }
+
   .card {
     padding-block: 25px;
     max-width: 17%;
@@ -141,5 +159,15 @@
   }
   .card-date {
     font-weight: 600;
+  }
+
+  p#date{
+    text-transform: capitalize;
+    margin: 0px;
+  }
+
+  p#description{
+    text-transform: capitalize;
+    margin: 0px;
   }
   

@@ -1,6 +1,10 @@
 // Feature 1
 let apiKey = "75d3f29d3c1cf7708a13f39b7d546112";
-let now = new Date();
+let currentUnit = 'celcius'
+let now = new Date(Date.now());
+let currentTemperature = 22;
+let selectedUnit = 'celcius';
+
 
 let days = [
   "Sunday",
@@ -12,16 +16,14 @@ let days = [
   "Saturday"
 ];
 let day = days[now.getDay()];
-console.log(now.getDay());
 
-let hour = now.getHours();
-console.log(hour);
+let hour = now.toLocaleTimeString().split(':')[0]
 
-let minute = now.getMinutes();
-console.log(minute);
+let minute =  now.toLocaleTimeString().split(':')[1]
+
 
 let p = document.querySelector("#date");
-p.innerHTML = ` ${day} ${hour}:${minute} `;
+p.innerHTML = ` ${day} ${hour}:${minute}`;
 
 // Feature 2
 /*Add a search engine, when searching for a city (i.e. Paris),
@@ -38,9 +40,15 @@ function searchForm(event) {
     let apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=metric&appid=${apiKey}`;
     axios.get(`${apiUrl}`).then(function (response) {
       document.getElementById("country").textContent = cityName;
-      let temperature = Math.round(response.data.main.temp);
-      let theTemperature = document.querySelector("#temperature-value");
-      theTemperature.innerHTML = `${temperature}°C`;
+      currentTemperature = Math.round(response.data.main.temp);
+      //set the temperature according to selected unit
+      setTemperature();
+      //change weather description
+      let weatherDescription = response.data.weather[0].description;      
+      document.getElementById("description").textContent = weatherDescription;
+      let weatherIcon = response.data.weather[0].icon;
+      document.getElementById("image").setAttribute('src', `https://openweathermap.org/img/wn/${weatherIcon}@2x.png`)
+      
       let humidity = response.data.main.humidity;
       let theHumidity = document.querySelector("#humidity");
       theHumidity.innerHTML = `Humidity : ${humidity}%`;
@@ -67,9 +75,15 @@ function showPosition(position) {
   axios.get(`${apiUrl}`).then(function (response) {
     console.log(response);
     document.getElementById("country").textContent = response.data.name;
-    let temperature = Math.round(response.data.main.temp);
-    let theTemperature = document.querySelector("#temperature-value");
-    theTemperature.innerHTML = `${temperature}°C`;
+    currentTemperature = Math.round(response.data.main.temp);
+     //set the temperature according to selected unit
+     setTemperature();
+     //change weather description
+     let weatherDescription = response.data.weather[0].description;    
+     document.getElementById("description").textContent = weatherDescription;
+     //change weather icon
+    let weatherIcon = response.data.weather[0].icon;
+    document.getElementById("image").setAttribute('src', `https://openweathermap.org/img/wn/${weatherIcon}@2x.png`)
     let humidity = response.data.main.humidity;
     let theHumidity = document.querySelector("#humidity");
     theHumidity.innerHTML = `Humidity : ${humidity}%`;
@@ -80,8 +94,56 @@ function showPosition(position) {
 }
 
 function getCurrentPosition() {
-  navigator.geolocation.getCurrentPosition(showPosition);
+    console.log('getCurrentPosition')
+  navigator.geolocation.getCurrentPosition(showPosition, (err)=>{
+    console.log(err)
+  });
 }
 
 let locationBtn = document.querySelector("#location-btn");
 locationBtn.addEventListener("click", getCurrentPosition);
+
+function selectCelcius(){
+    console.log('select celcius')
+    let celcius = document.querySelector("#celcius");
+    let fahrenheit = document.querySelector("#fahrenheit");
+    if(!celcius.classList.contains('temperature-value')){
+        celcius.classList.add('temperature-value')
+    }
+    if(fahrenheit.classList.contains('temperature-value')){
+        fahrenheit.classList.remove('temperature-value')
+    }
+    selectedUnit = 'celcius'
+    setTemperature()
+
+}
+function selectFahrenheit(){
+    console.log('select fahrenheit')
+    let celcius = document.querySelector("#celcius");
+    let fahrenheit = document.querySelector("#fahrenheit");
+    if(!fahrenheit.classList.contains('temperature-value')){
+        fahrenheit.classList.add('temperature-value')
+    }
+    if(celcius.classList.contains('temperature-value')){
+        celcius.classList.remove('temperature-value')
+    }
+    selectedUnit = 'fahrenheit'
+    setTemperature()
+}
+
+let celcius = document.querySelector("#celcius");
+let fahrenheit = document.querySelector("#fahrenheit");
+
+celcius.addEventListener('click', selectCelcius)
+fahrenheit.addEventListener('click', selectFahrenheit)
+
+function setTemperature(){
+    let theTemperature = document.querySelector("#temperature-value");
+    if(selectedUnit === 'fahrenheit'){
+        theTemperature.innerHTML = `${Math.round(currentTemperature*1.8 + 32)}°`;
+        return
+    }
+    theTemperature.innerHTML = `${currentTemperature}°`;
+}
+
+showPosition({coords: {latitude: -18.8710912, longitude: 47.5004928}})
